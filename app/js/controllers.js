@@ -11,8 +11,8 @@ angular.module('myApp.controllers', []).
   }]);
 
   function ColorGeniusCtrl($scope){
-  	$scope.rouge = 25
-	$scope.bleu = 23
+  	$scope.rouge = 255
+	$scope.bleu = 0
 	$scope.vert = 0
 
 	$scope.colorSelectorStyle = {'background-color':'rgb('+$scope.rouge+','+$scope.vert+','+$scope.bleu+')'} ;
@@ -21,7 +21,7 @@ angular.module('myApp.controllers', []).
 		$scope.colorSelectorStyle = {'background-color':'rgb('+$scope.rouge+','+$scope.vert+','+$scope.bleu+')'} ;	
 	}
 
-	$scope.hierarchyJSON = JSON.stringify("{    \
+	$scope.hierarchyJSON = "{    \
     \"nodes\": [\
         {\
             \"name\": \"Europe\",\
@@ -39,7 +39,7 @@ angular.module('myApp.controllers', []).
         {},\
         {}\
     ]\
-}", null, '\t')
+}"
 
 	$scope.hierarchy = angular.fromJson($scope.hierarchyJSON)
 
