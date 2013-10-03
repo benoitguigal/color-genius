@@ -8,13 +8,31 @@
 <body ng-controller=ColorGeniusCtrl>
 
 
-  R <input type="text" ng-model=rouge ng-change="setColorStyle() "> </input>
-  V <input type="text" ng-model=vert ng-change="setColorStyle()"> </input>
-  B <input type="text" ng-model=bleu ng-change="setColorStyle()"> </input>
+  R <input type="text" ng-model=rouge ng-change="setColorStyle(); setSelectorXY()"> </input>
+  V <input type="text" ng-model=vert ng-change="setColorStyle(); setSelectorXY()"> </input>
+  B <input type="text" ng-model=bleu ng-change="setColorStyle(); setSelectorXY()"> </input>
 
-   <div class="colorSelector" ng-style="colorSelectorStyle"></div>
+  <div class="colorSelector" ng-style="colorSelectorStyle"></div>
+  <p> {{selectorXY}} <p>
+  <button ng-click="processHierarchy(hierarchy)"> GOOOOOO </button>
+  {{colors}}
 
-   <textarea class="hierarchy" rows="30" ng-model="hierarchyJSON"  ></textarea>
+  <textarea class="hierarchy" rows="30" ng-model="hierarchyJSON"  ></textarea>
+  <br>
+  <button type="submit" ng-click="parseJSON()"> Go </button>
+  <ul>
+    <li ng-repeat="child in hierarchy.children">
+      <div class="block" ng-style="findColor(child.name)">{{child.name}}</div>
+        <ul>
+          <li ng-repeat="child in child.children">
+          <div class="block">{{child.name}}</div> 
+            <ul>
+            <li ng-repeat="child in child.children">
+            <div class="block">{{child.name}}</div> 
+            </ul>
+        </ul>
+    </li>
+  </ul>
 
   <!-- In production use:
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
