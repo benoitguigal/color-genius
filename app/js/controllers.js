@@ -58,36 +58,6 @@ $scope.findX = function(base, nodesCount, min, max){
 
 $scope.colors = {}
 
-$scope.processHierarchy = function(hierarchy){
-  $scope.colors = {}
-  var base = $scope.RGBtoXY($scope.rouge, $scope.vert, $scope.bleu)
-  $scope.recur(hierarchy.children, base[0], 0, 1)
-} 
-
-$scope.recur = function(children, base, min, max){
-    if(children == []) {return} 
-    else {
-      var nodesCount = children.length
-      var intervalLength = (max - min) / nodesCount
-      var nodes = $scope.findX(base, nodesCount, min, max)
-      var i
-      for(i=0; i<nodesCount; i++){
-        var base = ((nodes[i]*10) % 10) / 10
-        $scope.colors[children[i]] = base
-      }
-      for(i=0; i<nodesCount; i++){
-        var min = ((nodes[i] - intervalLength / 2) + intervalLength) 
-        var max = nodes[i] + intervalLength / 2
-        console.log(children[i])
-        console.log(min)
-        console.log(max)
-        $scope.recur(children[i].children, nodes[i], min, max) 
-      }
-    }
-  }
-
-
-
 $scope.hierarchyJSON = angular.toJson($scope.hierarchy, true)
 
 $scope.parseJSON = function(){
@@ -100,24 +70,56 @@ $scope.setSelectorXY = function(){
   $scope.selectorXY = $scope.RGBtoXY($scope.rouge, $scope.vert , $scope.bleu)
 }
 
-
-$scope.RGBtoXYZ = function(r, g, b){
-  var x = 0.588*r + 0.179*g + 0.183*b ;
-  var y = 0.29*r + 0.606*g + 0.105*b ;
-  var z = 0*r + 0.068*g + 1.021*b ;
-  return [x, y, z] ;
-} 
-
-$scope.XYZtoXY = function(X, Y, Z){
-  var x = X / (X + Y + Z)
-  var y = Y / (X + Y + Z)
-  return [x, y]
+$scope.RGBtoHSV = function(r, g, b){
+  var rp = r / 255
+  var gp = g / 255
+  var bp = b / 255
+  var Cmax = Math.max(rp, gp, bp)
+  var Cmin = Math.min(rp, gp, bp)
+  var delta = Cmax - Cmin
+  var h
+  if (Cmax == rp){
+    h = 60 * ((gp - bp) / delta) % 6
+  } else if (Cmax == gp) {
+    h = 60 * ((bp - rp) / delta + 2)
+  } else {
+    h = 60 * ((rp - gp) / delta + 4)
+  }
+  var s 
+  if(delta == 0){
+    s = 0
+  } else {
+    delta = delta / Cmax
+  }
+  var v = Cmax
+  return [h, s, v]
 }
 
-$scope.RGBtoXY = function(r, g, b){
-  var XYZ = $scope.RGBtoXYZ(r, g, b)
-  return $scope.XYZtoXY(XYZ[0], XYZ[1], XYZ[2])
+var HSVcolors = {}
+
+$scope.maximizeDistance = function(tree, minAngle, maxAngle){
+  var nodes = tree.children
+  var count = nodes.count
+  if (count == 0) return
+  var arcLength = (maxAngle - minAngle)
+  var intervalLength = arcLength / count 
+  for(i=0; i<count; i++){
+    HSVcolors[children[i].name] = (minAngle + i*intervalLength) 
+  }
+  for(i=0; i<count; i++){
+    var minIndice 
+    if(i = 0) count -1 else (i-1)
+
+    $scope.maximizeDistance(children[i], ,)
+  }
 }
+
+$scope.processHierarchy = function(hierarchy){
+  HSVcolors = {}
+
+}
+
+$scope.recur = function()
 
 
 
