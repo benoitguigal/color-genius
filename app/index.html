@@ -8,31 +8,32 @@
 <body ng-controller=ColorGeniusCtrl>
 
 
-  R <input type="text" ng-model=rouge ng-change="setColorStyle(); setSelectorXY()"> </input>
-  V <input type="text" ng-model=vert ng-change="setColorStyle(); setSelectorXY()"> </input>
-  B <input type="text" ng-model=bleu ng-change="setColorStyle(); setSelectorXY()"> </input>
-
+  R <input type="text" ng-model=rouge ng-change="setColorStyle(); setHSLConversion(); processHierarchy();"> </input>
+  V <input type="text" ng-model=vert ng-change="setColorStyle(); setHSLConversion(); processHierarchy();"> </input>
+  B <input type="text" ng-model=bleu ng-change="setColorStyle(); setHSLConversion(); processHierarchy();"> </input>
+  <p> HSV conversion {{hue}}, {{saturation}}, {{light}}</p>
+  
   <div class="colorSelector" ng-style="colorSelectorStyle"></div>
-  <p> {{selectorXY}} <p>
-  <button ng-click="processHierarchy(hierarchy)"> GOOOOOO </button>
-  {{colors}}
 
   <textarea class="hierarchy" rows="30" ng-model="hierarchyJSON"  ></textarea>
   <br>
   <button type="submit" ng-click="parseJSON()"> Go </button>
   <ul>
     <li ng-repeat="child in hierarchy.children">
-      <div class="block" ng-style="findColor(child.name)">{{child.name}}</div>
+      <div class="block" ng-style="findColorFor(child.name)">{{child.name}}</div>
         <ul>
-          <li ng-repeat="child in child.children">
-          <div class="block">{{child.name}}</div> 
+          <li ng-repeat="child2 in child.children">
+          <div class="block" ng-style="findColorFor(child2.name)">{{child2.name}}</div> 
             <ul>
-            <li ng-repeat="child in child.children">
-            <div class="block">{{child.name}}</div> 
+            <li ng-repeat="child3 in child2.children">
+            <div class="block" ng-style="findColorFor(child3.name)">{{child3.name}}</div> 
             </ul>
         </ul>
     </li>
   </ul>
+
+  <button ng-click="processHierarchy()"> GOOOOOO </button>
+  <p>{{HSVcolors}}</p>
 
   <!-- In production use:
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>

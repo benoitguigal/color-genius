@@ -41,3 +41,7 @@
 .block {
   width: 100px
 }
+
+.test {
+  color: hsl(0,100%,100%);
+}
