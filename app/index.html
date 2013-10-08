@@ -17,7 +17,7 @@
 
   <textarea class="hierarchy" rows="30" ng-model="hierarchyJSON"  ></textarea>
   <br>
-  <button type="submit" ng-click="parseJSON()"> Go </button>
+  <button type="submit" ng-click="parseJSON(); processHierarchy();"> Go </button>
   <ul>
     <li ng-repeat="child in hierarchy.children">
       <div class="block" ng-style="findColorFor(child.name)">{{child.name}}</div>

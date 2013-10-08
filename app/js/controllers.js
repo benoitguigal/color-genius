@@ -11,12 +11,12 @@ angular.module('myApp.controllers', []).
   }]);
 
 function ColorGeniusCtrl($scope){
-  $scope.rouge = 255
-  $scope.vert = 0
-  $scope.bleu = 0
-  $scope.hue = 0
-  $scope.saturation = 100
-  $scope.light = 50
+  $scope.rouge = 65
+  $scope.vert = 183
+  $scope.bleu = 197
+  $scope.hue = 186
+  $scope.saturation = 53
+  $scope.light = 51
 
 
   $scope.colorSelectorStyle = {'background-color':'rgb('+$scope.rouge+','+$scope.vert+','+$scope.bleu+')'} ;
@@ -41,27 +41,110 @@ function ColorGeniusCtrl($scope){
 
   $scope.hierarchy = {
     "name": "World",
-    "children" : [
-      {"name": "Europe",
-      "children" : [
-        {"name": "France",
-        "children": [
-          {"name": "Ardeche",
-          "children": []}]},
-        {"name": "Germany",
-        "children": []}
-      ]},
-      {"name": "Africa",
-      "children":[
-        {"name": "South Africa",
-          "children": []},
-        {"name": "Namibia",
-          "children": []},
-        {"name": "Botswana",
-          "children": []}
-      ]}
+    "children": [
+        {
+            "name": "Europe",
+            "children": [
+                {
+                    "name": "France",
+                    "children": [
+                        {
+                            "name": "Ardeche",
+                            "children": []
+                        },
+                        {
+                            "name": "Basse Normandie",
+                            "children": []
+                        },
+                        {
+                            "name": "Yonne",
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Germany",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "name": "Africa",
+            "children": [
+                {
+                    "name": "South Africa",
+                    "children": []
+                },
+                {
+                    "name": "Namibia",
+                    "children": []
+                },
+                {
+                    "name": "Botswana",
+                    "children": []
+                },
+                {
+                    "name": "Morocco",
+                    "children": []
+                },
+                {
+                    "name": "Senegal",
+                    "children": []
+                },
+                {
+                    "name": "Somalia",
+                    "children": []
+                },
+                {
+                    "name": "Algeria",
+                    "children": []
+                },
+                {
+                    "name": "Mali",
+                    "children": []
+                },
+                {
+                    "name": "Benin",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "name": "America",
+            "children": [
+                {
+                    "name": "US",
+                    "children": []
+                },
+                {
+                    "name": "Perou",
+                    "children": []
+                },
+                {
+                    "name": "Argentina",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "name": "Asia",
+            "children": [
+                {
+                    "name": "Thailande",
+                    "children": []
+                },
+                {
+                    "name": "Pakistan",
+                    "children": []
+                },
+                {
+                    "name": "China",
+                    "children": []
+                }
+            ]
+        }
     ]
-  }
+}
 
   $scope.findX = function(base, nodesCount, min, max){
     var intervalLength = (max - min) / nodesCount
@@ -111,23 +194,37 @@ function ColorGeniusCtrl($scope){
 
   $scope.HSLcolors = {} 
 
-  $scope.maximizeDistance = function(tree, minAngle, maxAngle){
+  $scope.maximizeDistance = function(tree, minAngle, maxAngle, currentLight, ligthIncrease){
     var nodes = tree.children
     var count = nodes.length
     if (count == 0) return
-    var arcLength = Math.abs(maxAngle - minAngle)
-    var intervalLength = arcLength / count 
+    var arcLength
+    if(maxAngle >= minAngle){
+      arcLength = maxAngle - minAngle
+    } else {
+      arcLength = 360 - (minAngle - maxAngle)
+    }
+
+    var is360Degree = (arcLength == 360)
+    var intervalLength 
+    if(is360Degree) { intervalLength = arcLength / count} else { intervalLength = arcLength / (count + 1)}
     var i 
-    for(i=0; i<count; i++){
-      $scope.HSLcolors[nodes[i].name] = [toUniqueAngle(minAngle + i*intervalLength), $scope.saturation, $scope.light]
+    if(is360Degree){
+      for(i=0; i<count; i++){ 
+        $scope.HSLcolors[nodes[i].name] = [toUniqueAngle(minAngle + i*intervalLength), $scope.saturation, currentLight + ligthIncrease]
+      }  
+    } else {
+      for(i=0; i<count; i++){
+        $scope.HSLcolors[nodes[i].name] = [toUniqueAngle(minAngle + (i+1)*intervalLength), $scope.saturation, currentLight + ligthIncrease]
+      }
     }
     var j 
     for(j=0; j<count; j++){
       var currentHue = $scope.HSLcolors[nodes[j].name][0]
-      var halfInterval = intervalLength / 2 
+      var halfInterval = intervalLength / 2
       var minAng = toUniqueAngle(currentHue - halfInterval)
-      var maxAng = toUniqueAngle(currentHue + halfInterval)  
-      $scope.maximizeDistance(nodes[j], minAng, maxAng)
+      var maxAng = toUniqueAngle(currentHue + halfInterval) 
+      $scope.maximizeDistance(nodes[j], minAng, maxAng, currentLight + ligthIncrease, ligthIncrease)
     }
   }
 
@@ -138,7 +235,21 @@ function ColorGeniusCtrl($scope){
   $scope.processHierarchy = function(){
     $scope.HSLcolors = {}
     var base = $scope.hue
-    $scope.maximizeDistance($scope.hierarchy, base, base + 360)
+    var depth = treeDepth($scope.hierarchy)
+    var ligthIncrease = (100 - $scope.light)/(depth + 2)
+    $scope.maximizeDistance($scope.hierarchy, base, base + 360, $scope.light, ligthIncrease)
+  }
+
+  function treeDepth(hierarchy){
+    var nodes = hierarchy.children
+    if(nodes.length == 0) return 0 
+    var nodesCount = nodes.length
+    var depths = []
+    var i
+    for (i=0; i<nodesCount; i++){
+      depths[i] = treeDepth(nodes[i])
+    }  
+    return (1 + depths.sort().reverse()[0])
   }
 
   $scope.processHierarchy();
