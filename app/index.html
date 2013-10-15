@@ -27,6 +27,14 @@
             <ul>
             <li ng-repeat="child3 in child2.children">
             <div class="block" ng-style="findColorFor(child3.name)">{{child3.name}}</div> 
+              <ul>
+              <li ng-repeat="child4 in child3.children">
+              <div class="block" ng-style="findColorFor(child4.name)">{{child4.name}}</div>
+                <ul>
+                <li ng-repeat="child5 in child4.children">
+                <div class="block" ng-style="findColorFor(child5.name)">{{child5.name}}</div> 
+                </ul>
+              </ul>
             </ul>
         </ul>
     </li>
